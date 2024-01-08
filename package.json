@@ -1,7 +1,7 @@
 {
   "name": "trinity-capstone-v2",
   "version": "0.1.0",
-  "main": "Projects/Naruto/server/index.js",
+  "main": "server/index.js",
   "private": true,
   "scripts": {
     "dev": "next dev",
