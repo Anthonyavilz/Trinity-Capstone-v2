@@ -4,12 +4,14 @@ require('dotenv').config();
 const express = require('express')
 const cors = require('cors')
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // App Declarations
 const narutoApp = express()
 const cocktailApp = express()
 const totkApp = express()
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // App Middlewares
 
@@ -39,51 +41,85 @@ const totkApp = express()
     totkApp.use(cors())
         // While not a basic app, the controllers will be using JSONWebtokens so additional middleware is not needed.
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Naruto Port, Functions, & Endpoints
 const narutoPort = 1234
 
+    // Functions
+    const { createJu, getJu, modifyJu, deleteJu } = require('./controllers/Naruto/userJutsu')
 
+    // Endpoints
+    narutoApp.post('/naruto', createJu)
+    narutoApp.get('/naruto', getJu)
+    narutoApp.put('/naruto/:id', modifyJu)
+    narutoApp.delete('/naruto/:id', deleteJu)
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Cocktail Hour Port, Sequelize Connection, Functions & Endpoints
 const cocktailPort = 5678
     
     // Functions
+    const { cocktailRegister, cocktailLogin, checkUser } = require('./controllers/Cocktail-Hour/cocktail-auth')
+    const { addPost, getLocations, getUserPost, editUserPost, deleteUserPost } = require('./controllers/Cocktail-Hour/post')
 
+        // Auth Endpoints
+        cocktailApp.post('/cocktail-register', cocktailRegister)
+        cocktailApp.post('/cocktail-login', cocktailLogin)
+        cocktailApp.get('/cocktail-users', checkUser)
+
+        // User Endpoints
+        cocktailApp.post('/cocktail-hour/newPost', addPost)
+        cocktailApp.get('/cocktail-hour/locations/:id', getLocations)
+        cocktailApp.get('/cocktail-hour/userPosts/:id', getUserPost)
+        cocktailApp.put('/cocktail-hour/editPost/:id', editUserPost)
+        cocktailApp.delete('/cocktail-hour/deletePost', deleteUserPost)
     
-    
-    // Sequelize Connection, Models, & Seed file
+    // Sequelize Connection, & Models
     const { cocktailSequelize } = require('./util/cocktailHourDB')
     const { CocktailUser, Cocktails } = require('./models/Cocktail-Hour-Models/cocktailModels')
     cocktailSequelize
-        .sync({force: true})
-        .then(() => {
-            console.log('Tables sent')
-        })
-        .catch((err) => {
-            console.log('Connection error in Cocktail Hour')
-        })
-        // .sync()
+        // .sync({force: true})
         // .then(() => {
-        //     console.log('Tables sent')
+        //     console.log('Cocktail Tables sent')
         // })
         // .catch((err) => {
         //     console.log('Connection error in Cocktail Hour')
         // })
+        .sync()
+        .then(() => {
+            console.log('Cocktail Tables sent')
+        })
+        .catch((err) => {
+            console.log('Connection error in Cocktail Hour')
+        })
             // Two different version of the same code to help clear the data from the tables/drop any tables to help with starting fresh in development stages.
             // I just commit out the block I need according to testing.
 
-
-
-
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Tears of the Kingdom Port, Sequelize Connection, Functions & Endpoints
 const totkPort = 8760
 
     // Functions
+    const { getHelms, getChestArmor, getLegArmor, getSelectedHelm, getSelectedChest, getSelectedLeg } = require('./controllers/ToTK/armor')
+    
 
+        // Armor Options Endpoints
+        totkApp.get('/helms', getHelms)
+        totkApp.get('/helms/:id', getSelectedHelm)
 
-    // Sequelize Connection & Models
+        totkApp.get('/chest-plates', getChestArmor)
+        totkApp.get('/chest-plates/:id', getSelectedChest)
+
+        totkApp.get('/leg-armor', getLegArmor)
+        totkApp.get('/leg-armor/:id', getSelectedLeg)
+
+        // Auth Endpoints
+        
+
+    // Sequelize Connection, Models, & Seed file
     const { totkSequelize } = require('./util/totkDB')
     const { TotkUser, Helm, Chest, Leg, ArmorSet, Favorites } = require('./models/ToTK-Models/totkModels')
     const seed = require('./util/totkSeed')
@@ -106,6 +142,7 @@ const totkPort = 8760
             // Same concept except I'm feeding the seed file and resetting the tables in the first block. After running the code, 
             // all base armors will be there and all I need to do is sync with the user tables.
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Port Listens
 narutoApp.listen(narutoPort, () => console.log(`Naruto running on port ${narutoPort}`))
