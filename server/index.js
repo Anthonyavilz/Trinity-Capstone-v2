@@ -104,7 +104,8 @@ const totkPort = 8760
 
     // Functions
     const { getHelms, getChestArmor, getLegArmor, getSelectedHelm, getSelectedChest, getSelectedLeg } = require('./controllers/ToTK/armor')
-    
+    const { totkRegister, totkLogin, userDatabase } = require('./controllers/ToTK/totk-auth')
+    const { addArmorSet, usersFavorite, getArmorSets, getUsersFavorite } = require('./controllers/ToTK/totk-user')
 
         // Armor Options Endpoints
         totkApp.get('/helms', getHelms)
@@ -117,7 +118,16 @@ const totkPort = 8760
         totkApp.get('/leg-armor/:id', getSelectedLeg)
 
         // Auth Endpoints
-        
+        totkApp.post('/totk/register', totkRegister)
+        totkApp.post('/totk/login', totkLogin)
+        totkApp.get('/totk/users', userDatabase)
+
+        // User Endpoints
+        totkApp.post('/armorset', addArmorSet)
+        totkApp.get('/sets/:id', getArmorSets)
+        totkApp.post('/user-favorites', usersFavorite)
+        totkApp.get('/user-favorites/:userId', getUsersFavorite)
+
 
     // Sequelize Connection, Models, & Seed file
     const { totkSequelize } = require('./util/totkDB')
